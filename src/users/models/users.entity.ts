@@ -8,15 +8,15 @@ import {RoleEntity} from '../../role/models/role.entity'
 //? Entity is Name Column
 @Entity('user_info')
 export class UsersEntity{
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn({type: 'int' })
     id: number;
 
-    @Column({unique: true})
+    @Column({type: 'varchar' , length: 255 ,unique: true })
     @IsEmail()
     @IsNotEmpty()
     email: string;
 
-    @Column()
+    @Column({type: 'varchar' , length: 255 })
     @IsString()
     @IsNotEmpty()
     password: string;
