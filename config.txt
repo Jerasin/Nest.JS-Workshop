@@ -1,0 +1,5 @@
+Step1 : nest new 'name-project'
+Step2 : run command 'npm i @nestjs/typeorm typeorm pg @nestjs/config rxjs bcrypt class-validator class-transformer @nestjs/jwt passport-jwt passport dotenv @nestjs/passport'
+Step3 : run command 'npm i -D @types/bcrypt @types/passport-jwt @types/passport'
+Step4 : Create File .env config Environment DataBase in File app.module.ts
+Step5 : Create Route use command 'nest g 'use s is create service. use module create module ' '
