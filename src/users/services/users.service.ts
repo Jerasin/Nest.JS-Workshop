@@ -15,9 +15,7 @@ import { from, Observable } from 'rxjs';
 export class UsersService {
     constructor(
         @InjectRepository(UsersEntity)
-        private UsersRepository: Repository<UsersEntity>,
-
-
+        private UsersRepository: Repository<UsersEntity>
     ) { }
 
     //? ใช่ Rxjs
@@ -32,18 +30,33 @@ export class UsersService {
             throw new HttpException("Duplicate Email", HttpStatus.BAD_REQUEST)
         }
         else {
-            return await this.UsersRepository.save(user);
+            try {
+                return await this.UsersRepository.save(user);
+            }
+            catch (err) {
+                throw new HttpException(err, HttpStatus.BAD_REQUEST)
+            }
         }
 
     }
 
-    async loginUser(user: UsersEntity): Promise<UsersEntity> {
+    async loginUser(user: { email: string, password: string }): Promise<UsersEntity> {
         return await this.UsersRepository.findOne({ where: { email: user.email } }).catch((err) => {
             throw new HttpException(err.massage, HttpStatus.BAD_REQUEST)
         })
     }
 
-    async getAll(): Promise<UsersEntity[]> {
-        return await this.UsersRepository.find()
+    //? แบบใช้ Rxjs
+    getAll(): Observable<UsersEntity[]> {
+        return from(this.UsersRepository.find().catch((err) => {
+            throw new HttpException(err.massage, HttpStatus.BAD_REQUEST)
+        }))
+    }
+
+    async findById(id: number): Promise<UsersEntity> {
+        return await this.UsersRepository.findOne(id).catch((err) => {
+            throw new HttpException(err.massage, HttpStatus.BAD_REQUEST)
+        })
+
     }
 }

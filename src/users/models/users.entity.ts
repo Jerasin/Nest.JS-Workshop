@@ -1,10 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne , JoinColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne , JoinColumn , OneToMany } from "typeorm";
 
 //? ใช้สำหรับทำ validator และ return Error กลับไปให้ Client
 import { IsEmail, IsString, IsNotEmpty, MinLength, IsNumber, IsDate } from 'class-validator';
 
 import {RoleEntity} from '../../role/models/role.entity'
-
+import {ProductsEntity} from '../../products/models/products.entity'
 //? Entity is Name Column
 @Entity('user_info')
 export class UsersEntity{
@@ -38,4 +38,7 @@ export class UsersEntity{
 
     @Column({type: 'date' , nullable: true })
     updatedAt?: Date;
+
+    @OneToMany(() => ProductsEntity, productsEntity => productsEntity.id)
+    user: ProductsEntity;
 }

@@ -7,3 +7,8 @@ export interface User {
     createdAt: Date;
     updatedAt?: Date;
 }
+
+export interface userLogin {
+    email: string;
+    password: string;
+}

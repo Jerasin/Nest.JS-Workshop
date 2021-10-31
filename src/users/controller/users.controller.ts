@@ -1,8 +1,8 @@
-import { Body, Controller, Post , HttpException , HttpStatus , UseGuards, Get  } from '@nestjs/common';
+import { Body, Controller, Post , HttpException , HttpStatus , UseGuards, Get, Param  } from '@nestjs/common';
 import { UsersService } from '../services/users.service'
 
 //? Import Model
-import { User } from '../models/users.interface'
+import { userLogin , User } from '../models/users.interface'
 import {UsersEntity} from '../models/users.entity'
 
 //? Import Rxjs
@@ -13,7 +13,7 @@ import * as bcrypt from 'bcrypt'
 
 //? Import Jwt
 import { JwtService } from '@nestjs/jwt';
-import {JwtAuthGuard} from '../auth/jwt-auth.guard';
+import {JwtAuthGuard_Admin , JwtAuthGuard_User} from '../auth/jwt-auth.guard';
 
 
 
@@ -29,11 +29,19 @@ export class UsersController {
     // create(@Body() user: User): Observable<User> {
     //     return this.userService.createUser(user)
     // }
-    @UseGuards(JwtAuthGuard)
+
+    @UseGuards(JwtAuthGuard_Admin)
+    // @UseGuards(JwtAuthGuard_User)
     @Get()
-    async getAllusers(): Promise<any> {
-       return await this.userService.getAll()
+    getAllusers(): Observable<UsersEntity[]> {
+       return  from(this.userService.getAll());
     }
+
+    @Get(':id')
+    async getById(@Param() params ): Promise<UsersEntity> {
+       return await this.userService.findById(parseInt(params.id))
+    }
+
 
     
     @Post('register')
@@ -49,13 +57,13 @@ export class UsersController {
     }
 
     @Post('login')
-    async login(@Body() user: UsersEntity): Promise<Object> {
+    async login(@Body() user: userLogin): Promise<Object> {
          const getUser = await this.userService.loginUser(user)
          if(getUser){
             const isMatch = await bcrypt.compare(user.password,getUser.password)
             if(isMatch){
                 const payload = {id: getUser.id ,role: getUser.role}
-                console.log(getUser);
+                // console.log(getUser);
             return {
             access_token: this.jwtService.sign(payload),
           };
@@ -68,7 +76,4 @@ export class UsersController {
             throw new HttpException('Not Found',HttpStatus.NOT_FOUND)
         }
     }
-
-
-
 }
