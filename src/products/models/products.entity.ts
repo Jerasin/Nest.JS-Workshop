@@ -19,7 +19,7 @@ export class ProductsEntity{
     @Column({type: 'varchar' , length: 255 ,unique: true })
     @IsString()
     @IsNotEmpty()
-    name: string;
+    p_name: string;
 
     @Column({type: 'float'  })
     @IsNumber()
@@ -31,7 +31,7 @@ export class ProductsEntity{
     @IsNotEmpty()
     p_stock: number;
 
-    @Column({type: 'varchar', length: 255 ,unique: true})
+    @Column({type: 'varchar', length: 255 ,unique: true  , nullable: true})
     image: string;
 
     @Column({type: 'date' , default: ()=> 'CURRENT_TIMESTAMP'})
@@ -39,6 +39,10 @@ export class ProductsEntity{
 
     @Column({type: 'date' , nullable: true })
     updatedAt?: Date;
+
+    // @Column({name: 'createdBy'})
+    // @IsNumber()
+    // createdBy: number;
 
     @ManyToOne(()=>UsersEntity, (userEntity) =>{
         userEntity.id
