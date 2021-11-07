@@ -1,10 +1,11 @@
+import {User} from '../../users/models/users.interface'
 export interface ProductsFormData {
-    p_code: string;
+    p_code: string | number;
     p_name: string;
-    p_price: string ;
-    p_stock: string ;
+    p_price: string | number;
+    p_stock: string | number;
     image?: string;
-    createdBy: string;
+    createdBy: User //? This is Fk Db user;
 }
 
 export interface ProductInsert {
@@ -13,5 +14,5 @@ export interface ProductInsert {
     p_price: number ;
     p_stock: number ;
     image?: string;
-    createdBy: any ;
+    createdBy: User //? This is Fk Db user;
 }

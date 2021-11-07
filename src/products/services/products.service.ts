@@ -17,13 +17,13 @@ export class ProductsService {
     ) { }
 
     async createProduct(product: ProductInsert): Promise<ProductsEntity> {
+        console.log(product);
         return await this.ProductRepository.save(product)
     }
 
     async getProduct(page: number , limit: number ): Promise<object> {
         const currentPage = (page - 1) * limit;
-        // console.log(page, limit)
-
+console.log(currentPage,limit);
         const result = await this.ProductRepository.createQueryBuilder('p')
             .select(['p', 'createdBy.email'])
             .leftJoin('p.createdBy', 'createdBy')

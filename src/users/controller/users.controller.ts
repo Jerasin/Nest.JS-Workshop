@@ -8,14 +8,11 @@ import {UsersEntity} from '../models/users.entity'
 //? Import Rxjs
 import {from, Observable} from 'rxjs';
 
-//? Import Bcrypt
-import * as bcrypt from 'bcrypt'
-
 //? Import Jwt
 import { JwtService } from '@nestjs/jwt';
 import {JwtAuthGuard_Admin , JwtAuthGuard_User} from '../auth/jwt-auth.guard';
 
-
+import { FormDataRequest } from 'nestjs-form-data';
 
 @Controller('users')
 export class UsersController {
@@ -33,47 +30,30 @@ export class UsersController {
     @UseGuards(JwtAuthGuard_Admin)
     // @UseGuards(JwtAuthGuard_User)
     @Get()
-    getAllusers(): Observable<UsersEntity[]> {
-       return  from(this.userService.getAll());
-    }
+    //? Setup use Formdata
+    @FormDataRequest()
+    async getAllusers(@Body('page') page:any = 1 , @Body('limit') limit: any = 5): Promise<object> {
 
-    @Get(':id')
-    async getById(@Param() params ): Promise<UsersEntity> {
-       return await this.userService.findById(parseInt(params.id))
-    }
-
-
-    
-    @Post('register')
-    async create(@Body() user: UsersEntity): Promise<String> {
-        user.password = await bcrypt.hash(user.password,10)
-        const createUser = await this.userService.createUser(user)
-        if(createUser){
-            return 'Register Success'
-        }else{
-            throw new HttpException('Error',HttpStatus.BAD_REQUEST)
+        let pageInt:number
+        let limitInt:number
+        
+        if(typeof page === 'string' || typeof limit === 'string'){
+            pageInt = parseInt(page);
+            limitInt = parseInt(limit);
+            return await  this.userService.getUserList(page,limit)
         }
-         
-    }
-
-    @Post('login')
-    async login(@Body() user: userLogin): Promise<Object> {
-         const getUser = await this.userService.loginUser(user)
-         if(getUser){
-            const isMatch = await bcrypt.compare(user.password,getUser.password)
-            if(isMatch){
-                const payload = {id: getUser.id ,role: getUser.role}
-                // console.log(getUser);
-            return {
-            access_token: this.jwtService.sign(payload),
-          };
-            }
-            else{
-                throw new HttpException('Not Found',HttpStatus.NOT_FOUND)
-            }
+        else if(typeof page === 'number' || typeof limit === 'number'){
+            return  await this.userService.getUserList(page,limit)
         }
         else{
             throw new HttpException('Not Found',HttpStatus.NOT_FOUND)
         }
     }
+
+    // @UseGuards(JwtAuthGuard_Admin)
+    @Get(':id')
+    async getById(@Param('id') id:string ): Promise<UsersEntity> {
+       return await this.userService.findById(Number(id))
+    }
+
 }

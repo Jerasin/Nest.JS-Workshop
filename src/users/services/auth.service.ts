@@ -12,7 +12,7 @@ import { from, Observable } from 'rxjs';
 
 
 @Injectable()
-export class UsersService {
+export class AuthService {
     constructor(
         @InjectRepository(UsersEntity)
         private UsersRepository: Repository<UsersEntity>
@@ -47,18 +47,10 @@ export class UsersService {
     }
 
     //? แบบใช้ Rxjs
-    async getUserList(page:number,limit:number): Promise<object> {
-        const currentPage = (page - 1) * limit;
-        const result = await this.UsersRepository
-            .find({
-                skip: currentPage,
-                take: limit,               
-            })
-        console.log(result);
-        const countResult = await this.UsersRepository.count();
-        const countPage = Math.ceil(countResult/limit)
-                return {result: result, totalPage: countPage}
-           
+    getAll(): Observable<UsersEntity[]> {
+        return from(this.UsersRepository.find().catch((err) => {
+            throw new HttpException(err.massage, HttpStatus.BAD_REQUEST)
+        }))
     }
 
     async findById(id: number): Promise<UsersEntity> {

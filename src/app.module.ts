@@ -15,11 +15,16 @@ import { ProductsModule } from './products/products.module';
       type: 'postgres',
       host: process.env.PG_HOST,
       port: parseInt(process.env.PG_PORT),
-      username: process.env.PG_USER,
+      username: process.env.PG_USER ,
       password: process.env.PG_PASSWORD,
       database: process.env.PG_DATABASE,
       autoLoadEntities: true,
-      synchronize: true
+      synchronize: false,
+      migrationsTableName: "migrations",
+      migrations: ["migration/*.js"],
+      cli: {
+        "migrationsDir": "migration"
+    }
     }),
     UsersModule,
     RoleModule,
