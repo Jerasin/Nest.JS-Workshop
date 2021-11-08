@@ -25,4 +25,8 @@ COPY . .
 
 COPY --from=development /usr/src/app/dist ./dist
 
+RUN npm run migration:generate -- User
+
+RUN npm run migration:run
+
 CMD ["node", "dist/main"]
